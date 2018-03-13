@@ -31,7 +31,7 @@ Response when not blacklisted
 200 OK
 
 ```json
-{ safe: true }
+{ "safe": true }
 ```
 
 Response when blacklisted
@@ -40,11 +40,11 @@ Response when blacklisted
 
 ```json
 { 
-    safe: false, 
-    rejected_by: [
+    "safe": false, 
+    "rejected_by": [
         {
-            name: 'path/to/blacklist',
-            rule: '89.1.0.0/16'
+            "name": "path/to/blacklist",
+            "rule": "89.1.0.0/16"
         }
     ]
 }
