@@ -8,16 +8,14 @@
   "dependencies": {
     "@octokit/rest": "^15.2.1",
     "@types/nodegit": "^0.18.5",
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
-    "express": "~4.15.5",
-    "github-api": "^3.0.0",
+    "grpc": "^1.10.0",
     "ip-router": "^1.0.0",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.0",
     "nodegit": "^0.21.1",
     "rxjs": "^5.5.6",
-    "serve-favicon": "~2.4.5"
+    "rxjs-grpc": "^0.1.7"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2"
   }
 }

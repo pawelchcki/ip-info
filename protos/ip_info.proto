@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+service IpInfo {
+  rpc IsIpSafe (IsIpSafeRequest) returns (IpIsSafeResponse);
+}
+message IsIpSafeRequest {
+  string ip = 1;
+}
+
+message IpIsSafeResponse {
+  message RejectedDescription {
+    string source = 1;
+    string rule = 2;
+  }
+
+  bool safe = 1;
+  repeated RejectedDescription rejected_by = 2;
+}
