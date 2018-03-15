@@ -21,7 +21,6 @@ function addFileToRouter(router, path, file) {
     return path;
 }
 
-
 function fetchFile(sha) {
     return Observable.fromPromise(octokit.gitdata.getBlob({ owner: 'firehol', repo: 'blocklist-ipsets', sha: sha }))
         .map(b => Buffer.from(b.data.content, 'base64').toString('utf8'))

@@ -1,12 +1,12 @@
 {
 	"env": {
-		"browser": true,
+		"browser": false,
 		"node": true,
 		"es6": true,
 		"mocha": true,
 	},
 	"rules": {
-	  "semi": 2,
+		"semi": 2,
 		"camelcase": 0,
 		"curly": 0,
 		"no-bitwise": 2,
@@ -41,7 +41,9 @@
 	},
 	"overrides": [
 		{
-			"files": [ "*.tests.js" ],
+			"files": [
+				"*.tests.js"
+			],
 			"rules": {
 				// Support chai.js expressions like `.to.be.ok` and `to.be.true`.
 				"no-unused-expressions": 0
