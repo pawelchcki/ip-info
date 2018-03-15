@@ -22,30 +22,48 @@ The service will use Git-HTTP protocol to clone and update the repository with b
 
 Blacklists repository will be stored in a temporary folder and cleaned before service exits.
 
-## API
+### Data reloading
 
-### GET `/safe_ip/<ip>`
+Reloading the data can take considerable amount of time and CPU resources, as such it cannot be done in the same process that handles
+requests without negatively impacting throughput.
 
-Response when not blacklisted
+To allow safe reloading of data a minimum of 3 process setup can be used with two classes of processes
 
-200 OK
+#### Master Process
 
-```json
-{ "safe": true }
-```
+Is launched as first and is responsible for spawning new processes and ensuring there is always specific number of worker processes that have successfully loaded the data.
 
-Response when blacklisted
+Can also poll for changes and update the folder with the data, triggering restart of the processes.
 
-200 OK
+When new data is detected its fetched and a new Worker is spawned. Once that worker signals its ready old worker process is reaped.
 
-```json
-{ 
-    "safe": false, 
-    "rejected_by": [
-        {
-            "name": "path/to/blacklist",
-            "rule": "89.1.0.0/16"
-        }
-    ]
+#### Worker processes
+
+In normal operation at least one worker process is used, it serves incoming requests using GRPC.
+
+At startup time it loads the configured blacklists and signals the Master process that its ready to receive requests.
+
+
+## GRPC based API
+
+```proto3
+syntax = "proto3";
+
+service IpInfo {
+  rpc IsIpSafe (IsIpSafeRequest) returns (IpIsSafeResponse);
 }
+message IsIpSafeRequest {
+  string ip = 1;
+}
+
+message IpIsSafeResponse {
+  message RejectedDescription {
+    string source = 1;
+    string rule = 2;
+  }
+
+  bool safe = 1;
+  repeated RejectedDescription rejected_by = 2;
+}
+
 ```
