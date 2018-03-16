@@ -1,4 +1,3 @@
-
 class IpSafeService {
   constructor(router) {
     this.router = router;
@@ -15,7 +14,7 @@ class IpSafeService {
         rule: route.src,
       };
     });
-  }
+  } 
 
   responseForIp(ip) {
     const routes = this.findRoutes(ip);
