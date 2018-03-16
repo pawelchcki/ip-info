@@ -19,8 +19,9 @@ const isSafe = Observable.bindNodeCallback((args, callback) => {
 
 async function benchmark() {
     console.time('call');
-    const requests = Observable.range(0, 10000).map(() => isSafe({ ip: '192.168.1.1' })).mergeAll()
-    requests.subscribe(() => { }, console.log, () => {
+    const requests = Observable.range(0, 10000).map(() => isSafe({ ip: '192.168.1.1' })).mergeAll(5000)
+        .filter(resp=>resp.safe === true).count()
+    requests.subscribe((count) => { console.log("num of requests: ", count)}, console.log, () => {
         console.timeEnd('call');
         console.log('completed');
     })
