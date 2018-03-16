@@ -1,20 +1,46 @@
 const { fork } = require('child_process');
 
-const s = fork('grpc_server.js', { silent: false, execArgv: [] });
-const s2 = fork('grpc_server.js', { silent: false, execArgv: [] });
+var current_worker = null;
+var worker_no = 0;
 
-s.on('message', (data) => {
-  console.log("c", data);
-});
+function build_worker() {
+  const worker = fork('grpc_worker.js', ['blocklist-ipsets'], { silent: false, execArgv: [] });
+  worker.number = worker_no;
+  worker_no++;
+  
+  worker.on('message', (data) => {
+    console.log(`worker(${worker.number})`, data);
+  });
 
-s2.on('message', (data) => {
-  console.log("c", data);
-});
+  worker.on('close', (code) => {
+    console.log(`worker(${worker.number}) exited with code ${code}`);
+  });
 
-s.on('close', (code) => {
-  console.log(`child process exited with code ${code}`);
-});
+  return worker;
+}
 
-s2.on('close', (code) => {
-  console.log(`child process exited with code ${code}`);
-});
+function worker_ready(worker, callback) {
+  worker.on('message', (data) => { 
+    if (data === 'ready'){
+      callback(worker);
+    }
+  });
+}
+
+function simulateUpdate(time){
+  setTimeout(()=>{
+    console.log('source is updated - reload worker');
+    
+    worker_ready(build_worker(), (worker) => {
+      if (current_worker !== null){
+        current_worker.kill();
+      }
+      
+      current_worker = worker;
+      simulateUpdate(100);
+    });
+    
+  }, time);
+}
+
+simulateUpdate(1);
