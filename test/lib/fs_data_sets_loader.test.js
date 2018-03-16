@@ -1,8 +1,6 @@
 const { expect } = require('chai');
 const { FSDataSetsLoader } = require('../../lib/fs_data_sets_loader');
 
-const exampleNonExistingFsSourcedir = '../fixtures/this_doesnot_exists';
-
 describe('FSDataSetsLoader', () => {
   context('loading from example source dir', () => {
     const sourceDir = `${__dirname}/../fixtures/example_fs_source`;
