@@ -43,7 +43,6 @@ In normal operation at least one worker process is used, it serves incoming requ
 
 At startup time it loads the configured blacklists and signals the Master process that its ready to receive requests.
 
-
 ## GRPC based API
 
 ```proto3
@@ -67,3 +66,13 @@ message IpIsSafeResponse {
 }
 
 ```
+
+## Tools
+
+### `benchmark.js` [server:port] [ip_to_check] [repeatQuery]
+
+This simple script can be used to benchmark the service
+
+### `client.js` [server:port] [ip_to_check]
+
+Query service for information about given IP
