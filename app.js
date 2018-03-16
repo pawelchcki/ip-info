@@ -37,7 +37,7 @@ function simulateUpdate(time){
       }
       
       current_worker = worker;
-      simulateUpdate(1000);
+      simulateUpdate(100);
     });
     
   }, time);
