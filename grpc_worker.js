@@ -11,15 +11,17 @@ const { RouterFactory } = require('./lib/router_factory');
 const { FSDataSetsLoader } = require('./lib/fs_data_sets_loader');
 const { IpSafeService } = require('./services/ip_safe_service');
 
-const dataSetsSource = new FSDataSetsLoader(sourceDir).load().take(200);
+const dataSetsSource = new FSDataSetsLoader(sourceDir).load().take(20);
+if (!process.send){
+  process.send = console.log;
+}
 process.send('ingestion_start');
-
 new RouterFactory().buildRouter(dataSetsSource).subscribe((router) => {
   process.send('ingestion_stop');
   const ipSafeService = new IpSafeService(router);
 
   const server = new grpc.Server();
-  server.addService(grpc_service.IpInfo.service, { isIpSafe: (call, callback) => callback(null, ipSafeService(call.request)) });
+  server.addService(grpc_service.IpInfo.service, { isIpSafe: (call, callback) => callback(null, ipSafeService.handle(call.request)) });
   server.bind(bindAddress, grpc.ServerCredentials.createInsecure());
 
   server.start();
