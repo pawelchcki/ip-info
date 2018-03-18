@@ -18,7 +18,7 @@ function onlyEnabledBlacklists({ dataSet }) {
 const dataSetsSource = new FSDataSetsLoader(sourceDir).load().filter(onlyEnabledBlacklists);
 
 const server = new grpc.Server();
-new RouterFactory().build(dataSetsSource).subscribe((router) => {
+new RouterFactory(dataSetsSource).build().subscribe((router) => {
   const ipSafeService = new IpSafeService(router);
 
   addService(server, grpc_service.IpInfo.service, { isIpSafe: ipSafeService });
