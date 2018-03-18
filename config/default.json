@@ -1,0 +1,13 @@
+{
+    "blacklist": {
+        "enabled_files": [
+            "threatcrowd.ipset"
+        ],
+        "repository_url": "https://github.com/firehol/blocklist-ipsets.git",
+        "polling_interval": 1000,
+        "repository_storage": null
+    },
+    "server":{
+        "address": "0.0.0.0:50052"
+    }
+}

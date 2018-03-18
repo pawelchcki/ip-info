@@ -1,0 +1,14 @@
+{
+    "blacklist": {
+        "enabled_files": {
+            "__name": "FILES",
+            "__format": "yml"
+        },
+        "repository_url": "REPO_URL",
+        "polling_interval": "POLLING_INTERVAL",
+        "repository_storage": "STORAGE"
+    },
+    "server": {
+        "address": "SERVER"
+    }
+}
