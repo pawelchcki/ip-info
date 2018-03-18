@@ -1,10 +1,9 @@
 const grpc = require('grpc');
-const grpc_service = grpc.load(`${__dirname}/protos/ip_info.proto`);
 
 const { RouterFactory } = require('./lib/router_factory');
 const { FSDataSetsLoader } = require('./lib/fs_data_sets_loader');
 const { IpSafeService } = require('./services/ip_safe_service');
-const { addService } = require('./lib/service_wrapper');
+const { setupGrpcRoutes } = require('./route/setup');
 const config = require('config');
 
 const sourceDir = config.get('blacklist.repository_storage');
@@ -16,12 +15,11 @@ function onlyEnabledBlacklists({ dataSet }) {
 }
 
 const dataSetsSource = new FSDataSetsLoader(sourceDir).load().filter(onlyEnabledBlacklists);
-
 const server = new grpc.Server();
+
 new RouterFactory(dataSetsSource).build().subscribe((router) => {
   const ipSafeService = new IpSafeService(router);
-
-  addService(server, grpc_service.IpInfo.service, { isIpSafe: ipSafeService });
+  setupGrpcRoutes(server, { ipSafeService });
 
   server.bind(bindAddress, grpc.ServerCredentials.createInsecure());
   server.start();
@@ -30,4 +28,3 @@ new RouterFactory(dataSetsSource).build().subscribe((router) => {
     process.send('ready');
   }
 });
-
