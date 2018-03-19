@@ -11,19 +11,30 @@ const repeat = args[2] || 100000;
 
 console.log(`Sending ${repeat} requests with ${ip} to ${server}`);
 
-var client = new grpc_service.IpInfo(server, grpc.credentials.createInsecure());
+
+const isSafeWithNewClient = Observable.bindNodeCallback((args, callback) => {
+  const client = new grpc_service.IpInfo(server, grpc.credentials.createInsecure());
+  return client.IsIpSafe(args, callback);
+});
+
+const client = new grpc_service.IpInfo(server, grpc.credentials.createInsecure());
 
 const isSafe = Observable.bindNodeCallback((args, callback) => {
   return client.IsIpSafe(args, callback);
 });
+
+function callIsSafe(args) {
+  return isSafe(args).catch(()=>isSafeWithNewClient(args));
+}
 
 function run() {
   console.time('total time');
 
   const requests = Observable.range(0, 100000)
         .bufferCount(8)
-        .map((block) => Observable.concat(block.map(() => isSafe({ ip: ip })))
+        .map((block) => Observable.concat(block.map(() => callIsSafe({ ip: ip })))
             .mergeAll()
+            .retry(10)
             .count())
         .mergeAll(100)
         .bufferTime(1000)
