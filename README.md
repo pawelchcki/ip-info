@@ -5,14 +5,14 @@ Respond with information if the IP is blocked by any of the approved blacklist.
 ## Features
 
 - Automatically update blacklist from https://github.com/firehol/blocklist-ipsets 
-- Fast response time
+- Fast response time (< 1ms)
 - Allow configuring which blacklist will be used 
 
 ## Considered features
 
-- Include current snapshot of the blacklist when service is packaged, so that it could retain some functionality without fetching
-- Provide health check endpoint
-- Provide metrics (response time, time to process blacklist files, seconds since last update, count of blocked/allowed ips)
+- [x] Include current snapshot of the blacklist when service is packaged, so that it could retain some functionality without fetching (implemented in Docker image)
+- [ ] Provide health check endpoint
+- [ ] Provide metrics (response time, time to process blacklist files, seconds since last update, count of blocked/allowed ips)
 
 ## Design 
 
