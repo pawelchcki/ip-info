@@ -10,14 +10,22 @@ const sourceDir = config.get('blacklist.repository_storage');
 const bindAddress = config.get('server.address');
 const enabledBlacklists = config.get('blacklist.enabled_files');
 
+if (!sourceDir) {
+  console.log("Repository storage needs to be specified");
+  process.exit(1);
+}
+
 function onlyEnabledBlacklists({ dataSet }) {
-  enabledBlacklists.some((blackList) => blackList === dataSet);
+  return enabledBlacklists.some((blackList) => blackList === dataSet);
 }
 
 const dataSetsSource = new FSDataSetsLoader(sourceDir).load().filter(onlyEnabledBlacklists);
 const server = new grpc.Server();
 
+console.log(`Reading data from ${enabledBlacklists}`);
 new RouterFactory(dataSetsSource).build().subscribe((router) => {
+  console.log('Data processed');
+
   const ipSafeService = new IpSafeService(router);
   setupGrpcRoutes(server, { ipSafeService });
 
