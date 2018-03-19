@@ -16,10 +16,12 @@ if (!sourceDir) {
 }
 
 function onlyEnabledBlacklists({ dataSet }) {
-  return enabledBlacklists.some((blackList) => blackList === dataSet);
+  return enabledBlacklists.some((blackList) => new RegExp(blackList).test(dataSet));
 }
 
-const dataSetsSource = new FSDataSetsLoader(sourceDir).load().filter(onlyEnabledBlacklists);
+const dataSetsSource = new FSDataSetsLoader(sourceDir).load().filter(onlyEnabledBlacklists)
+  .do(({ dataSet }) => console.log(`Loading ${dataSet}`));
+  
 const server = new grpc.Server();
 
 console.log(`Reading data from ${enabledBlacklists}`);
