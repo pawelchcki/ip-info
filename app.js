@@ -63,15 +63,19 @@ Observable.defer(() => {
     Observable.from(repo.head())
       .map(ref => ref.target())
       .do((oid) => currentOid = oid)
-      .subscribe((oldOid) => {
+      .subscribe(() => {
         console.log(`Starting polling upstream repo every ${pollingInterval}ms`);
         Observable.interval(pollingInterval)
-          .flatMap((i)=>{
-            return repo.fetch('origin');
-          }).subscribe(console.log);
+          .flatMap(() => repo.fetch('origin'))
+          .flatMap(() => Observable.zip(repo.head(), repo.getReference('origin/master')))
+          .filter(([head, origin]) => head.target().cmp(origin.target()))
+          .do(([head, origin]) => console.log(`Updating repo from ${head.target()}, to ${origin.target()}`))
+          .flatMap(([, origin]) => repo.getCommit(origin.target()))
+          .flatMap(originCommit => Git.Reset.reset(repo, originCommit, Git.Reset.TYPE.HARD))
+          .do(() => console.log(`Updated`))
+          .subscribe(console.log);
       });
   });
-
 
 function simulateUpdate(time) {
   setTimeout(() => {
